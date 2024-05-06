@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS results (
+  id   BIGSERIAL PRIMARY KEY,
+  cmd TEXT NOT NULL,
+  is_ended BOOLEAN NOT NULL,
+  result TEXT NOT NULL
+);
