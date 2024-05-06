@@ -4,7 +4,8 @@ services:
       context: .
       target: final
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DB_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
       - PORT=${API_PORT}

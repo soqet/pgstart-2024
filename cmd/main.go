@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"pgstart/internal/server"
+	"pgstart/internal/database"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -24,11 +26,15 @@ func mustHaveEnv(logger zerolog.Logger, envName string) string {
 
 
 func main() {
-	logger := log.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.TimeOnly})
+	logger := log.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.TimeOnly}).Level(zerolog.DebugLevel)
 	logger.Info().Msg("Starting server")
+	conn, err := pgx.Connect(context.Background(), mustHaveEnv(logger, "DB_URL"))
+	if err != nil {
+		logger.Fatal().Err(err).Msg("")
+	}
 	srv := http.Server{
 		Addr: fmt.Sprintf(":%s", mustHaveEnv(logger, "PORT")),
-		Handler: server.NewRouter(logger),
+		Handler: server.NewRouter(logger, database.New(conn)),
 	}
 	go func() {
 		err := srv.ListenAndServe()
@@ -41,7 +47,7 @@ func main() {
 	logger.Info().Msg("Server started")
 	<-stop
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
-	err := srv.Shutdown(ctx)
+	err = srv.Shutdown(ctx)
 	if err != nil {
 		logger.Error().Err(err).Msg("")
 	}
