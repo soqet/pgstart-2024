@@ -4,6 +4,15 @@
 ## Запуск
 
 ```
+git clone https://github.com/soqet/pgstart-2024.git
+cd pgstart-2024/
 cp ./.env.example ./.env
 docker compose build && docker compose up
 ```
+
+Использованная ОС: Linux (Debian 12)
+
+## Дополнительный функционал
+
+1. Остановка команды,
+1. Получение вывода не законченной команды
