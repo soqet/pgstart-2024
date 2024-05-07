@@ -8,8 +8,9 @@ import (
 	"os/signal"
 	"time"
 
-	"pgstart/internal/server"
+	commandrunner "pgstart/internal/command_runner"
 	"pgstart/internal/database"
+	"pgstart/internal/server"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
@@ -26,15 +27,28 @@ func mustHaveEnv(logger zerolog.Logger, envName string) string {
 
 
 func main() {
-	logger := log.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.TimeOnly}).Level(zerolog.DebugLevel)
+	var logLevel zerolog.Level
+	level, _ := os.LookupEnv("LOG_LEVEL")
+	switch level {
+	case "disabled":
+		logLevel = zerolog.Disabled
+	case "info":
+		logLevel = zerolog.InfoLevel
+	case "debug":
+		logLevel = zerolog.DebugLevel
+	default:
+		logLevel = zerolog.InfoLevel
+	}
+	logger := log.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.TimeOnly}).Level(logLevel)
 	logger.Info().Msg("Starting server")
 	conn, err := pgx.Connect(context.Background(), mustHaveEnv(logger, "DB_URL"))
 	if err != nil {
 		logger.Fatal().Err(err).Msg("")
 	}
+	runner := commandrunner.New(logger, database.New(conn))
 	srv := http.Server{
 		Addr: fmt.Sprintf(":%s", mustHaveEnv(logger, "PORT")),
-		Handler: server.NewRouter(logger, database.New(conn)),
+		Handler: server.NewRouter(logger, runner),
 	}
 	go func() {
 		err := srv.ListenAndServe()
@@ -44,7 +58,7 @@ func main() {
 	}()
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
-	logger.Info().Msg("Server started")
+	logger.Info().Msg("Ready to accept requests")
 	<-stop
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 	err = srv.Shutdown(ctx)

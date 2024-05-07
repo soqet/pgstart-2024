@@ -20,10 +20,10 @@ type ErrorSchema struct {
 }
 
 type CommandSchema struct {
-	ID      uint64 `json:"id,omitempty"`
-	Script  string `json:"script,omitempty"`
-	IsEnded bool   `json:"is_ended,omitempty"`
-	Result  string `json:"result,omitempty"`
+	ID      uint64 `json:"id"`
+	Script  string `json:"script"`
+	IsEnded bool   `json:"is_ended"`
+	Result  string `json:"result"`
 }
 
 type CreateCmdRequest struct {

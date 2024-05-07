@@ -38,8 +38,20 @@ func (db *DB) GetCmdByID(ctx context.Context, id uint64) (Command, error) {
 	return c, err
 }
 
+const updateCmdQuery = `
+INSERT INTO commands VALUES ($1, $2, $3, $4) 
+ON CONFLICT (id) DO UPDATE 
+SET cmd = excluded.cmd, is_ended = excluded.is_ended, result = excluded.result
+`
 func (db *DB) UpdateCmd(ctx context.Context, cmd Command) error {
-	return nil
+	_, err := db.conn.Exec(ctx, updateCmdQuery, cmd.ID, cmd.Cmd, cmd.IsEnded, cmd.Result)
+	return err
+}
+
+func (db *DB) SetAllEnded(ctx context.Context) error {
+	const query = "UPDATE commands SET is_ended = true WHERE is_ended = false"
+	_, err := db.conn.Exec(ctx, query)
+	return err
 }
 
 func (db *DB) DeleteCmd(ctx context.Context, id uint64) error {
@@ -48,8 +60,7 @@ func (db *DB) DeleteCmd(ctx context.Context, id uint64) error {
 	return err
 }
 
-func (db *DB) ListCommands(ctx context.Context) ([]Command, error) {
-	const query = "SELECT * FROM commands ORDER BY id"
+func (db *DB) listCommands(ctx context.Context, query string) ([]Command, error) {
 	rows, err := db.conn.Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -67,4 +78,14 @@ func (db *DB) ListCommands(ctx context.Context) ([]Command, error) {
 		return nil, err
 	}
 	return res, nil
+} 
+
+func (db *DB) ListCommands(ctx context.Context) ([]Command, error) {
+	const query = "SELECT * FROM commands ORDER BY id"
+	return db.listCommands(ctx, query)
+} 
+
+func (db *DB) ListEndedCommands(ctx context.Context) ([]Command, error) {
+	const query = "SELECT * FROM commands WHERE is_ended = true ORDER BY id"
+	return db.listCommands(ctx, query)
 } 
