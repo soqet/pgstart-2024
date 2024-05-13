@@ -17,11 +17,11 @@ var (
 type Runner struct {
 	pending map[uint64]*runningCommand
 	pmtx    sync.RWMutex
-	db      *database.DB
+	db      database.DB
 	logger  zerolog.Logger
 }
 
-func New(logger zerolog.Logger, db *database.DB) *Runner {
+func New(logger zerolog.Logger, db database.DB) *Runner {
 	db.SetAllEnded(context.Background())
 	return &Runner{
 		pending: make(map[uint64]*runningCommand),
@@ -52,8 +52,8 @@ func (r *Runner) Exec(ctx context.Context, script string) (uint64, error) {
 		cmdCtx, cancelCmd := context.WithCancel(context.Background())
 		defer cancelCmd()
 		runningCmd := &runningCommand{
-			id:          id,
-			script:      script,
+			id:     id,
+			script: script,
 			cancel: cancelCmd,
 		}
 		r.pmtx.Lock()
