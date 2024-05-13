@@ -9,10 +9,13 @@ cd pgstart-2024/
 cp ./.env.example ./.env
 docker compose build && docker compose up
 ```
+[Документация](/doc/README.md)
+
+![Screenshot](demonstration.png)
 
 Использованная ОС: Linux (Debian 12)
 
 ## Дополнительный функционал
 
 1. Остановка команды,
-1. Получение вывода незаконченной команды
+1. Получение вывода незаконченной команды.

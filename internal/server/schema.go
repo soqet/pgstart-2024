@@ -34,9 +34,6 @@ type CreateCmdResponse struct {
 	ID uint64 `json:"id,omitempty"`
 }
 
-type ListCmdResponse struct {
-	Commands []CommandSchema `json:"commands,omitempty"`
-}
 
 type GetCmdResponse struct {
 	CommandSchema
