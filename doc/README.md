@@ -7,7 +7,7 @@
 Если запрос выполнен успешно:
 ```json
 {
-    "data": any // результат выполнения запроса
+    "data": "any" // результат выполнения запроса
 }
 ```
 
@@ -16,8 +16,8 @@
 {
     "errors": [
         {
-            "code": number, // код ошибки
-            "desc": string  // описание
+            "code": "number", // код ошибки
+            "desc": "string"  // описание
         }
     ]
 }
@@ -32,13 +32,13 @@
 Тело запроса:
 ```json
 {
-    "script": string // sh скрипт
+    "script": "string" // sh скрипт
 }
 ```
 Результат:
 ```json
 {
-    "id": number // id команды
+    "id": "number" // id команды
 }
 ```
 
@@ -49,10 +49,10 @@
 Результат:
 ```json
 {
-    "id": number,       // id команды
-    "script": string,   // скрипт команды
-    "is_ended": bool,   // закончилась ли команда
-    "result": string    // результат выполнения (если команда не закончила выполнение, то результат будет промежуточный)  
+    "id": "number",       // id команды
+    "script": "string",   // скрипт команды
+    "is_ended": "bool",   // закончилась ли команда
+    "result": "string"    // результат выполнения (если команда не закончила выполнение, то результат будет промежуточный)  
 }
 ```
 
@@ -62,10 +62,10 @@
 ```json
 [
     {
-        "id": number,    
-        "script": string, 
-        "is_ended": bool,  
-        "result": string    
+        "id": "number",    
+        "script": "string", 
+        "is_ended": "bool",  
+        "result": "string"    
     }
 ]
 ```
@@ -76,10 +76,10 @@
 
 ```json
 {
-    "id": number,    
-    "script": string, 
-    "is_ended": bool, // всегда будет true
-    "result": string    
+    "id": "number",    
+    "script": "string", 
+    "is_ended": "bool", // всегда будет true
+    "result": "string"    
 }
 
 ```
